@@ -1,7 +1,3 @@
-var log = function() {
-    console.log.apply(console, arguments)
-}
-
 var todoList = []
 
 var addButton = document.querySelector("#id-button-add")
@@ -96,10 +92,8 @@ function currentTime() {
 // 返回自己在父元素中的下标
 function indexOfElement(element) {
     var parent = element.parentElement
-    console.log(parent)
     for (var i = 0; i < parent.children.length; i++) {
         var e = parent.children[i]
-        console.log(parent.children[i])
         if (e === element) {
             return i
         }
