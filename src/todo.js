@@ -61,8 +61,17 @@ todoContainer.addEventListener("keydown", function(event) {
         // 失去焦点
         target.blur()
         // 阻止回车换行
-        event.preventDefault()
+        event.preventDefault() 
     } 
+})
+
+// 失去焦点, 更新todoList 
+todoContainer.addEventListener("focusout", function(event) {
+    var target = event.target
+    // 更新 todoList
+    var index = indexOfElement(target.parentElement)
+    todoList[index].task = target.innerHTML
+    saveTodoList()
 })
 
 function toggleClass(element, className) {
