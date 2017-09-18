@@ -1,18 +1,68 @@
-var todoList = []
+// 给 "增加" 添加点击事件
+function bindEventAdd() {
+    var addButton = document.querySelector("#id-button-add")
+    addButton.addEventListener("click", function() {
+        var todoInput = document.querySelector("#id-input-todo")
+        var task = todoInput.value
+        var todo = {
+            task: task,
+            time: currentTime()
+        }
+        todoList.push(todo)
+        saveTodoList()
+        insertTodoToHtml(todo)
+        todoInput.value = ''
+    })  
+}
 
-var addButton = document.querySelector("#id-button-add")
-addButton.addEventListener("click", function() {
-    var todoInput = document.querySelector("#id-input-todo")
-    var task = todoInput.value
-    var todo = {
-        task: task,
-        time: currentTime()
-    }
-    todoList.push(todo)
-    saveTodoList()
-    insertTodoToHtml(todo)
-    todoInput.value = ''
-})
+function bindEventEnter() {
+    // 点击修改task, 阻止回车换行
+    var todoContainer = document.querySelector(".todo-container")
+    todoContainer.addEventListener("keydown", function(event) {
+        var target = event.target
+        if (event.key == "Enter") {
+            // 失去焦点
+            target.blur()
+            // 阻止回车换行
+            event.preventDefault() 
+        } 
+    })
+}
+
+function bindEventFocusout() {
+    // 失去焦点, 更新todoList 
+    var todoContainer = document.querySelector(".todo-container")
+    todoContainer.addEventListener("focusout", function(event) {
+        var target = event.target
+        // 更新 todoList
+        var index = indexOfElement(target.parentElement)
+        todoList[index].task = target.innerHTML
+        saveTodoList()
+    })
+}
+
+function bindEventBUtton() {
+    var todoContainer = document.querySelector(".todo-container")
+    todoContainer.addEventListener("click", function(event) {
+        var target = event.target
+        var todoDiv = target.parentElement
+        if (target.classList.contains("todo-done")) {
+            toggleClass(todoDiv, "done")
+        } else if (target.classList.contains("todo-delete")) {
+            var index = indexOfElement(target.parentElement)
+            todoDiv.remove()
+            todoList.splice(index, 1)
+            saveTodoList()
+        }
+    })
+}
+
+function bindEvents() {
+    bindEventAdd()
+    bindEventBUtton()
+    bindEventEnter()
+    bindEventFocusout()
+}
 
 function insertTodoToHtml(todo) {
     var todoContainer = document.querySelector(".todo-container")
@@ -35,40 +85,6 @@ function templateTodo(todo) {
     `
     return t
 }
-
-var todoContainer = document.querySelector(".todo-container")
-todoContainer.addEventListener("click", function(event) {
-    var target = event.target
-    var todoDiv = target.parentElement
-    if (target.classList.contains("todo-done")) {
-        toggleClass(todoDiv, "done")
-    } else if (target.classList.contains("todo-delete")) {
-        var index = indexOfElement(target.parentElement)
-        todoDiv.remove()
-        todoList.splice(index, 1)
-        saveTodoList()
-    }
-})
-
-// 点击修改task, 阻止回车换行
-todoContainer.addEventListener("keydown", function(event) {
-    var target = event.target
-    if (event.key == "Enter") {
-        // 失去焦点
-        target.blur()
-        // 阻止回车换行
-        event.preventDefault() 
-    } 
-})
-
-// 失去焦点, 更新todoList 
-todoContainer.addEventListener("focusout", function(event) {
-    var target = event.target
-    // 更新 todoList
-    var index = indexOfElement(target.parentElement)
-    todoList[index].task = target.innerHTML
-    saveTodoList()
-})
 
 function toggleClass(element, className) {
     if (element.classList.contains("done")) {
@@ -110,8 +126,21 @@ function loadTodoList() {
     return JSON.parse(s)
 }
 
-todoList = loadTodoList()
-for (var i = 0; i < todoList.length; i++) {
-    var todo = todoList[i];
-    insertTodoToHtml(todo)
+function initTodoList() {
+    todoList = loadTodoList()
+    for (var i = 0; i < todoList.length; i++) {
+        var todo = todoList[i];
+        insertTodoToHtml(todo)
+    }
 }
+
+var todoList = []
+
+var __main = function () {
+    // 绑定事件
+    bindEvents()
+    // 程序加载后，加载 todoList 到页面
+    initTodoList()
+}
+
+__main()
