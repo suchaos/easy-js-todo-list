@@ -15,16 +15,14 @@ addButton.addEventListener("click", function() {
     todoList.push(todo)
     saveTodoList()
     insertTodoToHtml(todo)
+    todoInput.value = ''
 })
 
 function insertTodoToHtml(todo) {
-    var todoInput = document.querySelector("#id-input-todo")
-    var task = todoInput.value
     var todoContainer = document.querySelector(".todo-container")
     var template = templateTodo(todo)
     if (todo.task) {
         todoContainer.insertAdjacentHTML('beforeend', template)
-        todoInput.value = ''
     } else {
         // alert("请填写内容")
     }
@@ -54,6 +52,17 @@ todoContainer.addEventListener("click", function(event) {
         todoList.splice(index, 1)
         saveTodoList()
     }
+})
+
+// 点击修改task, 阻止回车换行
+todoContainer.addEventListener("keydown", function(event) {
+    var target = event.target
+    if (event.key == "Enter") {
+        // 失去焦点
+        target.blur()
+        // 阻止回车换行
+        event.preventDefault()
+    } 
 })
 
 function toggleClass(element, className) {
